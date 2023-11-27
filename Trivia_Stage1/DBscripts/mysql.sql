@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[Players] (
   foreign key (RankId) references Ranks(RankId),
 );
 
-insert into Players (PlayerID, Email, pName, Score, ?) values (1, "yaron.traitel@gmail.com", "Yaron", 0, ?)
+insert into Players (PlayerID, Email, pName, Score, RankId) values (1, "yaron.traitel@gmail.com", "Yaron", 0, 1)
 
 CREATE TABLE [dbo].[Topics] (
   TopicID INT PRIMARY KEY,

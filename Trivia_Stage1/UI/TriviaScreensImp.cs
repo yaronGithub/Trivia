@@ -23,7 +23,7 @@ namespace Trivia_Stage1.UI
         public bool ShowSignup()
         {
             Console.WriteLine("Not implemented yet! Press any key to continue...");
-            Console.ReadKey(true); 
+            Console.ReadKey(true);
             return true;
         }
 
