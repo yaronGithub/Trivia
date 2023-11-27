@@ -50,3 +50,4 @@ INSERT INTO Status (StatusID, StatusName) VALUES
   (4, 'Active'),
   (5, 'Suspended'),
   (6, 'Banned');
+-- A new comment 1.

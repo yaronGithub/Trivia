@@ -9,8 +9,7 @@ namespace Trivia_Stage1.UI
     {
         public AddQuestionScreen():base("Add Question")
         {
-
-
+            
         }
 
         public override void Show()
