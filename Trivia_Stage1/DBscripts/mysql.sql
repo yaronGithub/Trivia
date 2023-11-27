@@ -2,12 +2,11 @@ create database Trivia
 go
 
 CREATE TABLE [dbo].[Players] (
-  PlayerID INT PRIMARY KEY,
-  Email VARCHAR(255),
-  Playername VARCHAR(255),
-  [Password VARCHAR(255),
-  [Rank] VARCHAR(50),
-  [NumOfQuestions] INT
+  [PlayerID] INT PRIMARY KEY,
+  [Email] VARCHAR(255),
+  [pName] VARCHAR(255),
+  [Score] int,
+  foreign key (RankId) references Ranks(RankId),
 );
 
 CREATE TABLE [dbo].[Topics] (
@@ -16,38 +15,31 @@ CREATE TABLE [dbo].[Topics] (
 );
 
 CREATE TABLE [dbo].[Questions] (
-  QuestionID INT PRIMARY KEY,
-  TopicID INT,
-  Text TEXT,
-  CorrectAnswer VARCHAR(255),
-  StatusID INT,
-  FOREIGN KEY (TopicID) REFERENCES Topics(TopicID),
-  FOREIGN KEY (StatusID) REFERENCES Status(StatusID)
-);
-
-CREATE TABLE [dbo].[PlayerPoints] (
-  [PlayerId] INT,
+  [QuestionID] INT PRIMARY KEY,
   [TopicID] INT,
-  [Points] INT,
-  PRIMARY KEY (PlayerId, TopicID),
-  FOREIGN KEY (PlayerId) REFERENCES Users(PlayerId),
-  FOREIGN KEY (TopicID) REFERENCES Topics(TopicID)
+  [Text] nvarchar(255),
+  [CorrectAnswer] nvarchar(255),
+  [Wrong1] nvarchar(255),
+  [Wrong2] nvarchar(255),
+  [Wrong3] nvarchar(255),
+  [StatusID] INT,
+  foreign key (TopicID) REFERENCES Topics(TopicID),
+  foreign key (StatusID) REFERENCES [Status](StatusID),
+  foreign key (PlayerId) references Players(PlayerId),
 );
 
 CREATE TABLE [dbo].[Status] (
   [StatusID] INT PRIMARY KEY,
-  [StatusName] VARCHAR(50) UNIQUE
+  [StatusName] nvarchar(50)
 );
 
 -- Example statuses for questions
-INSERT INTO Status (StatusID, StatusName) VALUES
+INSERT INTO [Status] (StatusID, StatusName) VALUES
   (1, 'Pending Approval'),
   (2, 'Approved'),
   (3, 'Rejected');
 
--- Example statuses for user accounts
-INSERT INTO Status (StatusID, StatusName) VALUES
-  (4, 'Active'),
-  (5, 'Suspended'),
-  (6, 'Banned');
--- A new comment 1.
+create table [dbo].[Ranks] (
+	[RankID] int,
+	[RankName] nvarchar(255),
+);
