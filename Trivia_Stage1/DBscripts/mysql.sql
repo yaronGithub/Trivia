@@ -6,35 +6,37 @@ CREATE TABLE [dbo].[Players] (
   [Email] nvarchar(100) unique,
   [pName] nvarchar(100),
   [Score] int,
-  foreign key (RankId) references Ranks(RankId),
+  RankID int foreign key references Ranks(RankID)
 );
 
-insert into Players (PlayerID, Email, pName, Score, RankId) values (1, "yaron.traitel@gmail.com", "Yaron", 0, 1)
+insert into Players (PlayerID, Email, pName, Score, RankId) values (1, 'yaron.traitel@gmail.com', 'Yaron', 0, 1)
 
 CREATE TABLE [dbo].[Topics] (
-  TopicID INT PRIMARY KEY,
-  TopicName VARCHAR(100)
+  TopicID INT PRIMARY KEY not null,
+  TopicName VARCHAR(100) not null
 );
 
 insert into Topics (TopicID, TopicName) values (1, 'Sports'), (2, 'Politics'), (3, 'History'), (4, 'Science'), (5, 'Ramon')
 
 CREATE TABLE [dbo].[Questions] (
-  [QuestionID] INT PRIMARY KEY,
-  [TopicID] INT,
+  [QuestionID] INT PRIMARY KEY not null,
   [Text] nvarchar(255),
-  [CorrectAnswer] nvarchar(100),
-  [Wrong1] nvarchar(100),
-  [Wrong2] nvarchar(100),
-  [Wrong3] nvarchar(100),
-  [StatusID] INT,
-  foreign key (TopicID) REFERENCES Topics(TopicID),
-  foreign key (StatusID) REFERENCES [Status](StatusID),
-  foreign key (PlayerId) references Players(PlayerId),
+  [CorrectAnswer] nvarchar(100) not null,
+  [Wrong1] nvarchar(100) not null,
+  [Wrong2] nvarchar(100) not null,
+  [Wrong3] nvarchar(100) not null,
+  TopicID int foreign key references Topics(TopicID),
+  StatusID int foreign key references [Status](StatusID),
+  PlayerID int foreign key references Players(PlayerID)
 );
 
+insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values (1, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1)
+insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values (2, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1)
+insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values (3, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1)
+
 CREATE TABLE [dbo].[Status] (
-  [StatusID] INT PRIMARY KEY,
-  [StatusName] nvarchar(50)
+  [StatusID] INT PRIMARY KEY not null,
+  [StatusName] nvarchar(50) not null
 );
 
 INSERT INTO [Status] (StatusID, StatusName) VALUES
@@ -43,8 +45,10 @@ INSERT INTO [Status] (StatusID, StatusName) VALUES
   (3, 'Rejected');
 
 create table [dbo].[Ranks] (
-	[RankID] int,
+	[RankID] int primary key,
 	[RankName] nvarchar(50),
 );
 
 insert into [Ranks] (RankID, RankName) values (1, 'Manager'), (2, 'Master'), (3, 'Rookie')
+
+select * from Questions
