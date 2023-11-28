@@ -30,9 +30,12 @@ CREATE TABLE [dbo].[Questions] (
   PlayerID int foreign key references Players(PlayerID)
 );
 
-insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values (1, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1)
-insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values (2, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1)
-insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values (3, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1)
+insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3, TopicID, StatusID, PlayerID) values 
+	(1, 'How old is Benjamin Netanyahu?', '74', '73', '63', '94', 2, 2, 1),
+	(2, 'What is the hardest natural substance on Earth?', 'Diamond', 'Corundum', 'Titanium', 'Granite', 4, 2, 1),
+	(3, 'Who was the first President of the United States?', 'George Washington', 'John Adams', 'James Madison', 'Thomas Jefferson', 3, 2, 1),
+	(4, 'How many students are there in Ramon High Shcool?', '550', '551', '490', '1000', 5, 2, 1),
+	(5, 'Which country hosted the 2016 Summer Olympics?', 'Brazil', 'United States', 'Russia', 'China', 1, 2, 1)
 
 CREATE TABLE [dbo].[Status] (
   [StatusID] INT PRIMARY KEY not null,
