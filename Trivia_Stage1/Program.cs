@@ -1,4 +1,5 @@
-﻿using Trivia_Stage1.UI;
+﻿using Trivia_Stage1.Models;
+using Trivia_Stage1.UI;
 
 namespace Trivia_Stage1
 {

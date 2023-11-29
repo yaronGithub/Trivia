@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trivia_Stage1.Models;
+using Trivia_Stage1.ModelsExt;
 
 namespace Trivia_Stage1.UI
 {
@@ -12,7 +13,6 @@ namespace Trivia_Stage1.UI
 
         //Place here any state you would like to keep during the app life time
         //For example, player login details...
-        Player player = new Player();
         
 
         //Implememnt interface here
@@ -24,7 +24,8 @@ namespace Trivia_Stage1.UI
         }
         public bool ShowSignup()
         {
-            Console.WriteLine("Not implemented yet! Press any key to continue...");
+            Console.WriteLine("Please sign up and enter your details: ");
+            ModelsExt.TriviaDbContext.AddPlayer();
             Console.ReadKey(true);
             return true;
         }
