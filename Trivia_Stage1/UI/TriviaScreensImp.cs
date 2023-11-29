@@ -33,10 +33,11 @@ namespace Trivia_Stage1.UI
             {
                 id = int.Parse(Console.ReadLine());
             }catch (Exception e) {  Console.WriteLine(e.Message);}
-            while (db.PlayersExists(id))
+            while (db.PlayerExists(id))
             {
                 try
                 {
+                    Console.WriteLine("Id exists. Pls enter a different id: ");
                     id = int.Parse(Console.ReadLine());
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
@@ -47,6 +48,10 @@ namespace Trivia_Stage1.UI
             int rankId = 3;
 
             db.AddPlayer(id, email, name, score, rankId);
+            if (db.PlayerExists(2))
+            {
+                Console.WriteLine("Exists!");
+            }
             Console.ReadKey(true);
             return true;
         }

@@ -31,7 +31,7 @@ namespace Trivia_Stage1.Models
             Console.WriteLine(p.PlayerId);
         }
 
-        public bool PlayersExists(int id) 
+        public bool PlayerExists(int id) 
         {
             Models.TriviaDbContext db = new Models.TriviaDbContext();
             foreach (Player p in db.Players)
