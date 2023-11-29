@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Trivia_Stage1.Models;
-using Trivia_Stage1.ModelsExt;
 
 namespace Trivia_Stage1.UI
 {
@@ -25,7 +25,28 @@ namespace Trivia_Stage1.UI
         public bool ShowSignup()
         {
             Console.WriteLine("Please sign up and enter your details: ");
-            ModelsExt.TriviaDbContext.AddPlayer();
+
+            TriviaDbContext db = new TriviaDbContext();
+            int id = 0;
+            Console.WriteLine("Enter Id: ");
+            try
+            {
+                id = int.Parse(Console.ReadLine());
+            }catch (Exception e) {  Console.WriteLine(e.Message);}
+            while (db.PlayersExists(id))
+            {
+                try
+                {
+                    id = int.Parse(Console.ReadLine());
+                }
+                catch (Exception ex) { Console.WriteLine(ex.Message); }
+            }
+            string email = "awdwaf@awfdawd";
+            string name = "sappp";
+            int score = 0;
+            int rankId = 3;
+
+            db.AddPlayer(id, email, name, score, rankId);
             Console.ReadKey(true);
             return true;
         }

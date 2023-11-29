@@ -1,29 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Trivia_Stage1.Models;
 
-namespace Trivia_Stage1.ModelsExt
+
+namespace Trivia_Stage1.Models
 {
-    internal partial class TriviaDbContext : DbContext
+    public partial class TriviaDbContext : DbContext
     {
-        static void ShowChangeTrackerObjects(Models.TriviaDbContext db)
+        public void ShowChangeTrackerObjects()
         {
-            db.ChangeTracker.DetectChanges();
-            Console.WriteLine(db.ChangeTracker.DebugView.LongView);
+            this.ChangeTracker.DetectChanges();
+            Console.WriteLine(this.ChangeTracker.DebugView.LongView);
         }
-        public static void AddPlayer()
+        public void AddPlayer(int id, string email, string name, int score, int rankId)
         {
             Models.TriviaDbContext db = new Models.TriviaDbContext();
-
-            Console.WriteLine("Enter player id: ");
-            int id = int.Parse(Console.ReadLine());
-            Console.WriteLine("Enter player email: ");
-            string email = Console.ReadLine();
-            Console.WriteLine("Enter player name: ");
-            string name = Console.ReadLine();
-            int score = 0;
-            int rankId = 3;
 
             Player p = new Player()
             {
@@ -35,9 +26,22 @@ namespace Trivia_Stage1.ModelsExt
             };
 
             db.Players.Add(p);
-            ShowChangeTrackerObjects(db);
+            ShowChangeTrackerObjects();
             db.SaveChanges();
             Console.WriteLine(p.PlayerId);
+        }
+
+        public bool PlayersExists(int id) 
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Player p in db.Players)
+            {
+                if (p.PlayerId == id)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
