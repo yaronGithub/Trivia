@@ -13,12 +13,44 @@ namespace Trivia_Stage1.UI
 
         //Place here any state you would like to keep during the app life time
         //For example, player login details...
-        
+        int id;
+        TriviaDbContext db = new TriviaDbContext();
+        string email;
+        string name;
+        int score;
+        int? rankId;
+        Player? player;
+        bool loggedIn = false;
 
         //Implememnt interface here
         public bool ShowLogin()
         {
-            Console.WriteLine("Not implemented yet! Press any key to continue...");
+            Console.WriteLine("Please log in with your id and email: ");
+
+            Console.WriteLine("Enter Id: ");
+            id = 0;
+            try
+            {
+                id = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter Email: ");
+                email = Console.ReadLine();
+            }
+            catch (Exception e) { Console.WriteLine(e.Message); }
+            while (!db.PlayerLoginCorrect(email, id))
+            {
+                Console.WriteLine("Player details are incorrect. Pls enter the correct details: ");
+                Console.WriteLine("Enter Id: ");
+                id = 0;
+                try
+                {
+                    id = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Enter Email: ");
+                    email = Console.ReadLine();
+                } catch (Exception e) { Console.WriteLine(e.Message); }
+            }
+            Console.WriteLine("Logged in successfully!");
+            
+            loggedIn = true;
             Console.ReadKey(true);
             return true;
         }
@@ -26,32 +58,54 @@ namespace Trivia_Stage1.UI
         {
             Console.WriteLine("Please sign up and enter your details: ");
 
-            TriviaDbContext db = new TriviaDbContext();
-            int id = 0;
+            id = 0;
             Console.WriteLine("Enter Id: ");
             try
             {
                 id = int.Parse(Console.ReadLine());
-            }catch (Exception e) {  Console.WriteLine(e.Message);}
-            while (db.PlayerExists(id))
-            {
-                try
+
+                while (db.PlayerExists(id))
                 {
-                    Console.WriteLine("Id exists. Pls enter a different id: ");
-                    id = int.Parse(Console.ReadLine());
+                    try
+                    {
+                        Console.WriteLine("Id exists. Pls enter a different id: ");
+                        id = int.Parse(Console.ReadLine());
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.Message); }
                 }
-                catch (Exception ex) { Console.WriteLine(ex.Message); }
-            }
-            string email = "awdwaf@awfdawd";
-            string name = "sappp";
-            int score = 0;
-            int rankId = 3;
+            } catch (Exception e) { Console.WriteLine(e.Message); }
+
+            Console.WriteLine("Enter Email: ");
+            try
+            {
+                email = Console.ReadLine();
+
+                while (email.Length < 10 || !email.Contains('@') || db.PlayerEmailExists(email))
+                {
+                    if (email.Length < 10 || !email.Contains('@'))
+                    {
+                        Console.WriteLine("Please enter an email with more than 10 characters, which contains '@'.Please enter a different. ");
+                        email = Console.ReadLine();
+                    }
+                        
+                    if (db.PlayerEmailExists(email))
+                    {
+                        Console.WriteLine("Email aleardy exists. Please enter a different. ");
+                        email = Console.ReadLine();
+                    }
+                }
+            } catch (Exception e) { Console.WriteLine(e.Message); }
+
+            Console.WriteLine("Enter your name: ");
+            try
+            {
+                name = Console.ReadLine();
+            }catch (Exception e) { Console.WriteLine(e.Message); }
+            
+            score = 0;
+            rankId = 3;
 
             db.AddPlayer(id, email, name, score, rankId);
-            if (db.PlayerExists(2))
-            {
-                Console.WriteLine("Exists!");
-            }
             Console.ReadKey(true);
             return true;
         }
@@ -69,12 +123,23 @@ namespace Trivia_Stage1.UI
         }
         public void ShowGame()
         {
-            Console.WriteLine("Not implemented yet! Press any key to continue...");
+            Console.WriteLine("Welcome to the TRIVIA GAME");
+            Console.WriteLine("Question no. 1");
+            Console.WriteLine("---------------");
+
             Console.ReadKey(true);
         }
         public void ShowProfile()
         {
-            Console.WriteLine("Not implemented yet! Press any key to continue...");
+            player = db.ReturnPlayerById(id);
+            string rank = db.GetRankByRankID(player.RankId);
+            Console.WriteLine("---------------------------------------------");
+            Console.WriteLine($"Player Id: [{player.PlayerId}]");
+            Console.WriteLine($"Email:     [{player.Email}]");
+            Console.WriteLine($"Name:      [{player.PName}]");
+            Console.WriteLine($"Score:     [{player.Score}]");
+            Console.WriteLine($"Rank:      [{rank}]");
+            Console.WriteLine("---------------------------------------------");
             Console.ReadKey(true);
         }
     }
