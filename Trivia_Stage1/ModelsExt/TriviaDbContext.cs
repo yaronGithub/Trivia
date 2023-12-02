@@ -109,8 +109,9 @@ namespace Trivia_Stage1.Models
             return "";
         }
 
-        public void ChangeScoreToPlayer(int id, Action<Player> action)
+        public int? ChangeScoreToPlayer(int id, Action<Player> action)
         {
+            int? s = 0;
             Models.TriviaDbContext db = new Models.TriviaDbContext();
             foreach (Player p in db.Players)
             {
@@ -126,10 +127,12 @@ namespace Trivia_Stage1.Models
                         p.Score = 0;
                     }
                     db.Entry(p).State = EntityState.Modified;
+                    s = p.Score;
                 }
             }
             ShowChangeTrackerObjects();
             db.SaveChanges();
+            return s;
         }
     }
 }

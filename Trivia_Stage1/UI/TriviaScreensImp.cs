@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
@@ -52,6 +53,7 @@ namespace Trivia_Stage1.UI
             Console.WriteLine("Logged in successfully!");
             
             loggedIn = true;
+            player = db.ReturnPlayerById(id);
             Console.ReadKey(true);
             return true;
         }
@@ -107,6 +109,7 @@ namespace Trivia_Stage1.UI
             rankId = 3;
 
             db.AddPlayer(id, email, name, score, rankId);
+            player = db.ReturnPlayerById(id);
             Console.WriteLine($"Welcome to THE TRIVIA {name}");
             Console.ReadKey(true);
             return true;
@@ -114,7 +117,14 @@ namespace Trivia_Stage1.UI
 
         public void ShowAddQuestion()
         {
-            Console.WriteLine("Not implemented yet! Press any key to continue...");
+            if (player.Score < 100 && player.RankId != 1)
+            {
+                Console.WriteLine($"Sorry, you can't add questions. You need {100-player.Score} more points.");
+            }
+            else
+            {
+                Console.WriteLine("Add as many questions as you want!");
+            }
             Console.ReadKey(true);
         }
 
@@ -125,9 +135,9 @@ namespace Trivia_Stage1.UI
         }
         public void ShowGame()
         {
-            Console.WriteLine("Welcome to the TRIVIA GAME");
-            Console.WriteLine("Question no. 1");
-            Console.WriteLine("---------------");
+            Console.WriteLine("Welcome to THE TRIVIA GAME");
+            Console.WriteLine("--------------------------\n");
+            Console.WriteLine($"score={player.Score}\n");
             int correct = 0;
             Random r = new Random();
             string topic = "";
@@ -139,7 +149,7 @@ namespace Trivia_Stage1.UI
             int randomQid = r.Next(1, db.Questions.Count());
             foreach (Question q in db.Questions)
             {
-                if (q.QuestionId == randomQid)
+                if (q.QuestionId == randomQid && q.StatusId == 2)
                 {
                     topic = db.GetTopicBytopicID(q.TopicId);
                     correctAns = q.CorrectAnswer;
@@ -210,13 +220,13 @@ namespace Trivia_Stage1.UI
             } catch (Exception e) { Console.WriteLine(e.Message); }
             if (answer == correct)
             {
-                Console.WriteLine("Correct!");
-                try { db.ChangeScoreToPlayer(id, p => p.Score += 10); } catch (Exception e) { Console.WriteLine(e.Message); };
+                player.Score = db.ChangeScoreToPlayer(id, p => p.Score += 10);
+                Console.WriteLine($"Correct! (score={player.Score})");
             }
             else
             {
-                Console.WriteLine("Try again next time.");
-                try { db.ChangeScoreToPlayer(id, p => p.Score -= 5); } catch (Exception e) { Console.WriteLine(e.Message); };
+                player.Score = db.ChangeScoreToPlayer(id, p => p.Score -= 5);
+                Console.WriteLine($"Try again next time. (score={player.Score})");
             }
             Console.ReadKey(true);
         }
