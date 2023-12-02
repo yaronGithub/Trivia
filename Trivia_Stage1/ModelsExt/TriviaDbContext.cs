@@ -9,8 +9,9 @@ namespace Trivia_Stage1.Models
     {
         public void ShowChangeTrackerObjects()
         {
-            this.ChangeTracker.DetectChanges();
-            Console.WriteLine(this.ChangeTracker.DebugView.LongView);
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            db.ChangeTracker.DetectChanges();
+            Console.WriteLine(db.ChangeTracker.DebugView.LongView);
         }
         public void AddPlayer(int id, string email, string name, int score, int? rankId)
         {
@@ -28,7 +29,6 @@ namespace Trivia_Stage1.Models
             db.Players.Add(p);
             ShowChangeTrackerObjects();
             db.SaveChanges();
-            Console.WriteLine(p.PlayerId);
         }
 
         public bool PlayerExists(int id) 
@@ -96,6 +96,40 @@ namespace Trivia_Stage1.Models
             return "";
         }
 
+        public string GetTopicBytopicID(int? topicID)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Topic t in db.Topics)
+            {
+                if (t.TopicId == topicID)
+                {
+                    return t.TopicName;
+                }
+            }
+            return "";
+        }
 
+        public void ChangeScoreToPlayer(int id, Action<Player> action)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Player p in db.Players)
+            {
+                if (p.PlayerId == id)
+                {
+                    action(p);
+                    if (p.Score >= 100)
+                    {
+                        p.Score = 100;
+                    }
+                    if (p.Score <= 0)
+                    {
+                        p.Score = 0;
+                    }
+                    db.Entry(p).State = EntityState.Modified;
+                }
+            }
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
+        }
     }
 }
