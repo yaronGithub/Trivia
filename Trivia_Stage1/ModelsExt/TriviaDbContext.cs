@@ -134,5 +134,26 @@ namespace Trivia_Stage1.Models
             db.SaveChanges();
             return s;
         }
+
+        public void AddQuestion(int topicId, string text, string correct, string w1, string w2, string w3, int id, int statusId)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            Question q = new Question()
+            {
+                QuestionId = db.Questions.Count() + 1,
+                Text = text,
+                CorrectAnswer = correct,
+                Wrong1 = w1,
+                Wrong2 = w2,
+                Wrong3 = w3,
+                TopicId = topicId,
+                StatusId = statusId,
+                PlayerId = id
+            };
+
+            db.Questions.Add(q);
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
+        }
     }
 }
