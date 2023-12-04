@@ -127,37 +127,54 @@ namespace Trivia_Stage1.UI
             }
             else
             {
-                Console.WriteLine("*Note: adding a question will take all your points.*");
-                Console.WriteLine("Enter topic (1-Sports, 2-Politics, 3-History, 4-Science, 5-Ramon): ");
-                try
+                int ch = 0;
+                if (player.RankId == 1)
                 {
-                    topicId = int.Parse(Console.ReadLine());
-                    while (topicId < 1 || topicId > 5)
+                    Console.WriteLine("Hi, dear manager!");
+                    Console.WriteLine("For adding a trivia topic enter 1 (else for adding a question): ");
+                    ch = int.Parse(Console.ReadLine());
+                    if (ch == 1)
+                    {
+                        Console.WriteLine("Enter a new topic: ");
+                        string newTopic = Console.ReadLine();
+                        db.AddNewTopic(newTopic);
+                    }
+                }
+                if (ch != 1)
+                {
+                    Console.WriteLine("*Note: adding a question will take all your points.*");
+                    Console.WriteLine($"Enter topic ( {db.ReturnTopicsString()}): ");
+                    try
                     {
                         topicId = int.Parse(Console.ReadLine());
-                    }
-                    Console.WriteLine("Enter question text: ");
-                    text = Console.ReadLine();
-                    Console.WriteLine("Enter the correct answer: ");
-                    correct = Console.ReadLine();
-                    Console.WriteLine("Enter wrong 1: ");
-                    wrong1 = Console.ReadLine();
-                    Console.WriteLine("Enter wrong 2: ");
-                    wrong2 = Console.ReadLine();
-                    Console.WriteLine("Enter wrong 3: ");
-                    wrong3 = Console.ReadLine();
-                    if (player.RankId == 1) { statusId = 2; }
-                    db.AddQuestion(topicId, text, correct, wrong1, wrong2, wrong3, id, statusId);
-                    db.ChangeScoreToPlayer(id, p => p.Score -= p.Score);
-                    if (statusId == 2)
-                    {
-                        Console.WriteLine("Your question was approved by the system.");
-                    }else
-                    {
-                        Console.WriteLine("Please wait for the system to approve your question.");
-                    }
-                } catch (Exception e) { Console.WriteLine(e.Message); }
+                        while (topicId < 1 || topicId > db.Topics.Count())
+                        {
+                            topicId = int.Parse(Console.ReadLine());
+                        }
+                        Console.WriteLine("Enter question text: ");
+                        text = Console.ReadLine();
+                        Console.WriteLine("Enter the correct answer: ");
+                        correct = Console.ReadLine();
+                        Console.WriteLine("Enter wrong 1: ");
+                        wrong1 = Console.ReadLine();
+                        Console.WriteLine("Enter wrong 2: ");
+                        wrong2 = Console.ReadLine();
+                        Console.WriteLine("Enter wrong 3: ");
+                        wrong3 = Console.ReadLine();
+                        if (player.RankId == 1) { statusId = 2; }
+                        db.AddQuestion(topicId, text, correct, wrong1, wrong2, wrong3, id, statusId);
+                        db.ChangeScoreToPlayer(id, p => p.Score -= p.Score);
+                        if (statusId == 2)
+                        {
+                            Console.WriteLine("Your question was approved by the system.");
+                        } else
+                        {
+                            Console.WriteLine("Please wait for the system to approve your question.");
+                        }
+                    } catch (Exception e) { Console.WriteLine(e.Message); }
+                }
             }
+            
             Console.ReadKey(true);
         }
 
@@ -167,27 +184,32 @@ namespace Trivia_Stage1.UI
             int choose = 0;
             if (player.RankId == 1 || player.RankId == 2)
             {
-                if (pQuestions != null)
+                if (pQuestions.Count != 0)
                 {
-                    int i = 0;
-                    while (choose != 1 && pQuestions.Count > 0)
+                    foreach (Question q in pQuestions)
                     {
-                        db.GetQuesDetailsbyQid(pQuestions[i].QuestionId);
+                        Console.WriteLine(db.GetQuesDetailsbyQid(q.QuestionId));
                         Console.WriteLine("Exit - 1. Approve-2. Reject - 3.");
                         choose = int.Parse(Console.ReadLine());
                         if (choose == 2)
                         {
-                            db.ApproveOrRejectQuestion(true, pQuestions[i].QuestionId);
-                            pQuestions.Remove(pQuestions[i]);
+                            db.ApproveOrRejectQuestion(true, q.QuestionId);
+                            //pQuestions.Remove(q);
                         }else if (choose == 3)
                         {
-                            db.ApproveOrRejectQuestion(false, pQuestions[i].QuestionId);
-                            pQuestions.Remove(pQuestions[i]);
+                            db.ApproveOrRejectQuestion(false, q.QuestionId);
+                            //pQuestions.Remove(q);
                         }
-                        i++;
+                        if (choose == 1)
+                        {
+                            break;
+                        }
                     }
-                }
-                else
+                    if (db.GetPendedQuestions().Count() == 0)
+                    {
+                        Console.WriteLine("There are no pended questions.");
+                    }
+                }else
                 {
                     Console.WriteLine("There are no pended questions.");
                 }
@@ -202,10 +224,9 @@ namespace Trivia_Stage1.UI
             Console.WriteLine("Welcome to THE TRIVIA GAME");
             Console.WriteLine("--------------------------\n");
             Console.WriteLine($"score={player.Score}\n");
-            Console.WriteLine("For exiting the game enter: 1.");
-            int choose = int.Parse(Console.ReadLine());
+            int answer = 0;
             int j = 1;
-            while (choose != 1)
+            while (answer != 5)
             {
                 Console.WriteLine($"Question no. {j}");
                 int correct = 0;
@@ -281,12 +302,12 @@ namespace Trivia_Stage1.UI
                     }
                 }
                 Console.WriteLine(fullQuestion);
-                Console.Write("\nEnter your answer (1-4): ");
-                int answer = 0;
+                Console.Write("\nEnter your answer (1-4, exit-5): ");
+                answer = 0;
                 try
                 {
                     answer = int.Parse(Console.ReadLine());
-                    while (answer > 4 || answer < 1)
+                    while ((answer > 4 || answer < 1) && answer != 5)
                     {
                         Console.WriteLine("Please enter an answer between 1-4: ");
                         answer = int.Parse(Console.ReadLine());
@@ -295,15 +316,14 @@ namespace Trivia_Stage1.UI
                 if (answer == correct)
                 {
                     player.Score = db.ChangeScoreToPlayer(id, p => p.Score += 10);
-                    Console.WriteLine($"Correct! (score={player.Score})");
+                    Console.WriteLine($"Correct! (score={player.Score})\n");
                 }
-                else
+                else if (answer != correct && answer != 5)
                 {
                     player.Score = db.ChangeScoreToPlayer(id, p => p.Score -= 5);
-                    Console.WriteLine($"Try again next time. (score={player.Score})");
+                    Console.WriteLine($"Try again next time. (score={player.Score})\n");
                 }
-                Console.WriteLine("For exiting the game enter 1: ");
-                choose = int.Parse(Console.ReadLine());
+                //Console.ReadKey(true);
                 j++;
                 //Console.Clear();
             }

@@ -54,5 +54,4 @@ create table [dbo].[Ranks] (
 
 insert into [Ranks] (RankID, RankName) values (1, 'Manager'), (2, 'Master'), (3, 'Rookie')
 
-select * from Players
 select * from Questions

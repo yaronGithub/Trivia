@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Trivia_Stage1.Models
@@ -208,6 +209,7 @@ namespace Trivia_Stage1.Models
                     if (qId == q.QuestionId)
                     {
                         q.StatusId = 2;
+                        db.Entry(q).State = EntityState.Modified;
                     }
                 }
             }else
@@ -216,10 +218,45 @@ namespace Trivia_Stage1.Models
                 {
                     if (qId == q.QuestionId)
                     {
-                        q.StatusId = 1;
+                        q.StatusId = 3;
+                        db.Entry(q).State = EntityState.Modified;
                     }
                 }
             }
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
+        }
+
+        public string ReturnTopicsString()
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            string topics = "";
+            foreach (Topic t in db.Topics)
+            {
+                topics += $"{t.TopicId}-{t.TopicName} ";
+            }
+            return topics;
+        }
+
+        public void AddNewTopic(string topicName)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            Topic t = new Topic()
+            {
+                TopicId = db.Topics.Count() + 1,
+                TopicName = topicName
+            };
+
+            db.Topics.Add(t);
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
+        }
+
+        public int NumberOfQuestionByPlayerId(int pId)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            var list = from q in db.Questions where q.PlayerId == pId select q;
+            return list.ToList().Count();
         }
     }
 }
