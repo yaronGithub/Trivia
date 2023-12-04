@@ -163,7 +163,38 @@ namespace Trivia_Stage1.UI
 
         public void ShowPendingQuestions()
         {
-            Console.WriteLine("Not implemented yet! Press any key to continue...");
+            List<Question> pQuestions = db.GetPendedQuestions();
+            int choose = 0;
+            if (player.RankId == 1 || player.RankId == 2)
+            {
+                if (pQuestions != null)
+                {
+                    int i = 0;
+                    while (choose != 1 && pQuestions.Count > 0)
+                    {
+                        db.GetQuesDetailsbyQid(pQuestions[i].QuestionId);
+                        Console.WriteLine("Exit - 1. Approve-2. Reject - 3.");
+                        choose = int.Parse(Console.ReadLine());
+                        if (choose == 2)
+                        {
+                            db.ApproveOrRejectQuestion(true, pQuestions[i].QuestionId);
+                            pQuestions.Remove(pQuestions[i]);
+                        }else if (choose == 3)
+                        {
+                            db.ApproveOrRejectQuestion(false, pQuestions[i].QuestionId);
+                            pQuestions.Remove(pQuestions[i]);
+                        }
+                        i++;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("There are no pended questions.");
+                }
+            }else
+            {
+                Console.WriteLine("Sorry but you are not allowed to approve or reject pending questions.");
+            }
             Console.ReadKey(true);
         }
         public void ShowGame()
@@ -171,99 +202,110 @@ namespace Trivia_Stage1.UI
             Console.WriteLine("Welcome to THE TRIVIA GAME");
             Console.WriteLine("--------------------------\n");
             Console.WriteLine($"score={player.Score}\n");
-            int correct = 0;
-            Random r = new Random();
-            string topic = "";
-            string correctAns = "";
-            string wrong1 = "";
-            string wrong2 = "";
-            string wrong3 = "";
-            string qText = "";
-            int randomQid = r.Next(1, db.Questions.Count()+1);
-            while (qText.Equals(""))
+            Console.WriteLine("For exiting the game enter: 1.");
+            int choose = int.Parse(Console.ReadLine());
+            int j = 1;
+            while (choose != 1)
             {
-                randomQid = r.Next(1, db.Questions.Count() + 1);
-                foreach (Question q in db.Questions)
+                Console.WriteLine($"Question no. {j}");
+                int correct = 0;
+                Random r = new Random();
+                string topic = "";
+                string correctAns = "";
+                string wrong1 = "";
+                string wrong2 = "";
+                string wrong3 = "";
+                string qText = "";
+                int randomQid = r.Next(1, db.Questions.Count() + 1);
+                while (qText.Equals(""))
                 {
-                    if (q.QuestionId == randomQid && q.StatusId == 2)
+                    randomQid = r.Next(1, db.Questions.Count() + 1);
+                    foreach (Question q in db.Questions)
                     {
-                        topic = db.GetTopicBytopicID(q.TopicId);
-                        correctAns = q.CorrectAnswer;
-                        wrong1 = q.Wrong1;
-                        wrong2 = q.Wrong2;
-                        wrong3 = q.Wrong3;
-                        qText = q.Text;
+                        if (q.QuestionId == randomQid && q.StatusId == 2)
+                        {
+                            topic = db.GetTopicBytopicID(q.TopicId);
+                            correctAns = q.CorrectAnswer;
+                            wrong1 = q.Wrong1;
+                            wrong2 = q.Wrong2;
+                            wrong3 = q.Wrong3;
+                            qText = q.Text;
+                        }
                     }
                 }
-            }
-            string fullQuestion = $"Topic: {topic}\n{qText}";
-            int shuffleAnsAndWrongs = r.Next(1, 5);
-            bool q1Asked = false;
-            bool q2Asked = false;
-            bool q3Asked = false;
-            bool q4Asked = false;
-            int i = 0;
-            while (i < 4)
-            {
-                shuffleAnsAndWrongs = r.Next(1, 5);
-                switch (shuffleAnsAndWrongs)
+                string fullQuestion = $"Topic: {topic}\n{qText}";
+                int shuffleAnsAndWrongs = r.Next(1, 5);
+                bool q1Asked = false;
+                bool q2Asked = false;
+                bool q3Asked = false;
+                bool q4Asked = false;
+                int i = 0;
+                while (i < 4)
                 {
-                    case 1:
-                        if (q1Asked == false)
-                        {
-                            fullQuestion += $"\n{i + 1}. {wrong2}";
-                            i++;
-                            q1Asked = true;
-                        }
-                        break;
-                    case 2:
-                        if (q2Asked == false)
-                        {
-                            fullQuestion += $"\n{i + 1}. {wrong3}";
-                            i++;
-                            q2Asked = true;
-                        }
-                        break;
-                    case 3:
-                        if (q3Asked == false)
-                        {
-                            fullQuestion += $"\n{i + 1}. {correctAns}";
-                            correct = i + 1;
-                            i++;
-                            q3Asked = true;
-                        }
-                        break;
-                    case 4:
-                        if (q4Asked == false)
-                        {
-                            fullQuestion += $"\n{i + 1}. {wrong1}";
-                            i++;
-                            q4Asked = true;
-                        }
-                        break;
+                    shuffleAnsAndWrongs = r.Next(1, 5);
+                    switch (shuffleAnsAndWrongs)
+                    {
+                        case 1:
+                            if (q1Asked == false)
+                            {
+                                fullQuestion += $"\n{i + 1}. {wrong2}";
+                                i++;
+                                q1Asked = true;
+                            }
+                            break;
+                        case 2:
+                            if (q2Asked == false)
+                            {
+                                fullQuestion += $"\n{i + 1}. {wrong3}";
+                                i++;
+                                q2Asked = true;
+                            }
+                            break;
+                        case 3:
+                            if (q3Asked == false)
+                            {
+                                fullQuestion += $"\n{i + 1}. {correctAns}";
+                                correct = i + 1;
+                                i++;
+                                q3Asked = true;
+                            }
+                            break;
+                        case 4:
+                            if (q4Asked == false)
+                            {
+                                fullQuestion += $"\n{i + 1}. {wrong1}";
+                                i++;
+                                q4Asked = true;
+                            }
+                            break;
+                    }
                 }
-            }
-            Console.WriteLine(fullQuestion);
-            Console.Write("\nEnter your answer (1-4): ");
-            int answer = 0;
-            try
-            {
-                answer = int.Parse(Console.ReadLine());
-                while (answer > 4 || answer < 1)
+                Console.WriteLine(fullQuestion);
+                Console.Write("\nEnter your answer (1-4): ");
+                int answer = 0;
+                try
                 {
-                    Console.WriteLine("Please enter an answer between 1-4: ");
                     answer = int.Parse(Console.ReadLine());
+                    while (answer > 4 || answer < 1)
+                    {
+                        Console.WriteLine("Please enter an answer between 1-4: ");
+                        answer = int.Parse(Console.ReadLine());
+                    }
+                } catch (Exception e) { Console.WriteLine(e.Message); }
+                if (answer == correct)
+                {
+                    player.Score = db.ChangeScoreToPlayer(id, p => p.Score += 10);
+                    Console.WriteLine($"Correct! (score={player.Score})");
                 }
-            } catch (Exception e) { Console.WriteLine(e.Message); }
-            if (answer == correct)
-            {
-                player.Score = db.ChangeScoreToPlayer(id, p => p.Score += 10);
-                Console.WriteLine($"Correct! (score={player.Score})");
-            }
-            else
-            {
-                player.Score = db.ChangeScoreToPlayer(id, p => p.Score -= 5);
-                Console.WriteLine($"Try again next time. (score={player.Score})");
+                else
+                {
+                    player.Score = db.ChangeScoreToPlayer(id, p => p.Score -= 5);
+                    Console.WriteLine($"Try again next time. (score={player.Score})");
+                }
+                Console.WriteLine("For exiting the game enter 1: ");
+                choose = int.Parse(Console.ReadLine());
+                j++;
+                //Console.Clear();
             }
             Console.ReadKey(true);
         }

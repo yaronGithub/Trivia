@@ -83,6 +83,19 @@ namespace Trivia_Stage1.Models
             return null;
         }
 
+        public string GetPlayerNameById(int? id)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Player p in db.Players)
+            {
+                if (p.PlayerId == id)
+                {
+                    return p.PName;
+                }
+            }
+            return null;
+        }
+
         public string GetRankByRankID(int? rankID)
         {
             Models.TriviaDbContext db = new Models.TriviaDbContext();
@@ -154,6 +167,59 @@ namespace Trivia_Stage1.Models
             db.Questions.Add(q);
             ShowChangeTrackerObjects();
             db.SaveChanges();
+        }
+
+        public List<Question> GetPendedQuestions()
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            List<Question> questions = new List<Question>();
+            foreach (Question q in db.Questions)
+            {
+                if (q.StatusId == 1)
+                {
+                    questions.Add(q);
+                }
+            }
+            return questions;
+        }
+
+        public string GetQuesDetailsbyQid(int qId)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            string fullquestion = "";
+            foreach (Question q in db.Questions)
+            {
+                if (qId == q.QuestionId)
+                {
+                    fullquestion += q.Topic + $"\n{q.Text}\nCorrect={q.CorrectAnswer}, Wrong1={q.Wrong1}, Wrong2={q.Wrong2}, Wrong3={q.Wrong3}";
+                    fullquestion += $"\nQuestion by player, {db.GetPlayerNameById(q.PlayerId)}.";
+                }
+            }
+            return fullquestion;
+        }
+
+        public void ApproveOrRejectQuestion(bool cond, int qId)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            if (cond)
+            {
+                foreach (Question q in db.Questions)
+                {
+                    if (qId == q.QuestionId)
+                    {
+                        q.StatusId = 2;
+                    }
+                }
+            }else
+            {
+                foreach (Question q in db.Questions)
+                {
+                    if (qId == q.QuestionId)
+                    {
+                        q.StatusId = 1;
+                    }
+                }
+            }
         }
     }
 }
