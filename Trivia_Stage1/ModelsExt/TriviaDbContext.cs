@@ -274,20 +274,39 @@ namespace Trivia_Stage1.Models
             db.SaveChanges();
         }
 
-        public void UpdateDetails(int pId, string email, string name)
+        public void UpdateDetails(int pId, string email, string name, int? score, int? rankId, bool cond)
         {
             Models.TriviaDbContext db = new Models.TriviaDbContext();
             foreach (Player p in db.Players)
             {
-                if (p.PlayerId == pId)
+                if (p.PlayerId == pId && cond)
                 {
                     p.Email = email;
                     p.PName = name;
+                    p.Score = score;
+                    p.RankId = rankId;
+                    db.Entry(p).State = EntityState.Modified;
+                }
+                if (p.PlayerId == pId && !cond)
+                {
+                    p.Score = score;
+                    p.RankId = rankId;
                     db.Entry(p).State = EntityState.Modified;
                 }
             }
             ShowChangeTrackerObjects();
             db.SaveChanges();
+        }
+
+        public string PlayersString()
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            string players = "";
+            foreach (Player p in db.Players)
+            {
+                players += $"Player #{p.PlayerId}, {p.Email}, {p.PName}, {p.Score}, {db.GetRankByRankID(p.RankId)}\n";
+            }
+            return players;
         }
     }
 }

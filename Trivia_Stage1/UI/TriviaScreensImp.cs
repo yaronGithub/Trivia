@@ -358,8 +358,30 @@ namespace Trivia_Stage1.UI
                 string email = Console.ReadLine();
                 Console.WriteLine("Update name: ");
                 string name = Console.ReadLine();
-                db.UpdateDetails(player.PlayerId, email, name);
+                db.UpdateDetails(player.PlayerId, email, name, player.Score, player.RankId, true);
                 Console.WriteLine("Details updated successfully!");
+            }
+            if (player.RankId == 1)
+            {
+                Console.WriteLine("Do you want to update other players's details? (y/n)");
+                answer = Console.ReadLine();
+                while (answer != "yes" && answer != "no" && answer != "y" && answer != "n")
+                {
+                    Console.WriteLine("Do you want to update other players's details? (y/n)");
+                    answer = Console.ReadLine();
+                }
+                if (answer == "yes" || answer == "y")
+                {
+                    Console.WriteLine(db.PlayersString());
+                    Console.WriteLine("\nEnter player id you want to change its details: ");
+                    int pId = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Update score: ");
+                    int score = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Update RankId: ");
+                    int rankId = int.Parse(Console.ReadLine());
+                    db.UpdateDetails(pId, player.Email, player.PName, score, rankId, false);
+                    Console.WriteLine($"Player #{pId} details were updated successfully!");
+                }
             }
             Console.ReadKey(true);
         }

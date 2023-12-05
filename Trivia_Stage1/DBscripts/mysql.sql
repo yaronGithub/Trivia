@@ -1,6 +1,13 @@
 create database Trivia
 go
 
+create table [dbo].[Ranks] (
+	[RankID] int primary key,
+	[RankName] nvarchar(50),
+);
+
+insert into [Ranks] (RankID, RankName) values (1, 'Manager'), (2, 'Master'), (3, 'Rookie')
+
 CREATE TABLE [dbo].[Players] (
   [PlayerID] INT PRIMARY KEY,
   [Email] nvarchar(100) unique,
@@ -17,6 +24,16 @@ CREATE TABLE [dbo].[Topics] (
 );
 
 insert into Topics (TopicID, TopicName) values (1, 'Sports'), (2, 'Politics'), (3, 'History'), (4, 'Science'), (5, 'Ramon')
+
+CREATE TABLE [dbo].[Status] (
+  [StatusID] INT PRIMARY KEY not null,
+  [StatusName] nvarchar(50) not null
+);
+
+INSERT INTO [Status] (StatusID, StatusName) VALUES
+  (1, 'Pending Approval'),
+  (2, 'Approved'),
+  (3, 'Rejected');
 
 CREATE TABLE [dbo].[Questions] (
   [QuestionID] INT PRIMARY KEY not null,
@@ -36,22 +53,5 @@ insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3
 	(3, 'Who was the first President of the United States?', 'George Washington', 'John Adams', 'James Madison', 'Thomas Jefferson', 3, 2, 1),
 	(4, 'How many students are there in Ramon High Shcool?', '550', '551', '490', '1000', 5, 2, 1),
 	(5, 'Which country hosted the 2016 Summer Olympics?', 'Brazil', 'United States', 'Russia', 'China', 1, 2, 1)
-
-CREATE TABLE [dbo].[Status] (
-  [StatusID] INT PRIMARY KEY not null,
-  [StatusName] nvarchar(50) not null
-);
-
-INSERT INTO [Status] (StatusID, StatusName) VALUES
-  (1, 'Pending Approval'),
-  (2, 'Approved'),
-  (3, 'Rejected');
-
-create table [dbo].[Ranks] (
-	[RankID] int primary key,
-	[RankName] nvarchar(50),
-);
-
-insert into [Ranks] (RankID, RankName) values (1, 'Manager'), (2, 'Master'), (3, 'Rookie')
 
 select * from Players
