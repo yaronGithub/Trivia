@@ -174,7 +174,11 @@ namespace Trivia_Stage1.UI
                     } catch (Exception e) { Console.WriteLine(e.Message); }
                 }
             }
-            
+            if (player.RankId == 1 && db.NumberOfQuestionByPlayerId(player.PlayerId) >= 10)
+            {
+                db.ChangePlayerRank(player.PlayerId);
+                Console.WriteLine("Your rank is 'Master'. From now you can approve or reject pended questions.");
+            }
             Console.ReadKey(true);
         }
 
@@ -340,6 +344,23 @@ namespace Trivia_Stage1.UI
             Console.WriteLine($"Score:     [{player.Score}]");
             Console.WriteLine($"Rank:      [{rank}]");
             Console.WriteLine("---------------------------------------------");
+
+            Console.WriteLine("Do you want to update your details (Email & name) y/n?");
+            string answer = Console.ReadLine();
+            while (answer != "yes" && answer != "no" && answer != "y" && answer != "n")
+            {
+                Console.WriteLine("Do you want to update your details (Email & name) y/n?");
+                answer = Console.ReadLine();
+            }
+            if (answer == "yes" || answer == "y")
+            {
+                Console.WriteLine("Update email: ");
+                string email = Console.ReadLine();
+                Console.WriteLine("Update name: ");
+                string name = Console.ReadLine();
+                db.UpdateDetails(player.PlayerId, email, name);
+                Console.WriteLine("Details updated successfully!");
+            }
             Console.ReadKey(true);
         }
     }

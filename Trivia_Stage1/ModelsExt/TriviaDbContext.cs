@@ -258,5 +258,36 @@ namespace Trivia_Stage1.Models
             var list = from q in db.Questions where q.PlayerId == pId select q;
             return list.ToList().Count();
         }
+
+        public void ChangePlayerRank(int pId)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Player p in db.Players)
+            {
+                if (p.PlayerId == pId)
+                {
+                    p.RankId = 2;
+                    db.Entry(p).State = EntityState.Modified;
+                }
+            }
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
+        }
+
+        public void UpdateDetails(int pId, string email, string name)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Player p in db.Players)
+            {
+                if (p.PlayerId == pId)
+                {
+                    p.Email = email;
+                    p.PName = name;
+                    db.Entry(p).State = EntityState.Modified;
+                }
+            }
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
+        }
     }
 }
