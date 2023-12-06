@@ -184,6 +184,17 @@ namespace Trivia_Stage1.Models
             return questions;
         }
 
+        public string GetAllQuestions()
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            string qu = "";
+            foreach (Question q in db.Questions)
+            {
+                qu += $"Question #{q.QuestionId}, {q.Text}, {q.CorrectAnswer}, {q.Wrong1}\n";
+            }
+            return qu;
+        }
+
         public string GetQuesDetailsbyQid(int qId)
         {
             Models.TriviaDbContext db = new Models.TriviaDbContext();
@@ -255,7 +266,7 @@ namespace Trivia_Stage1.Models
         public int NumberOfQuestionByPlayerId(int pId)
         {
             Models.TriviaDbContext db = new Models.TriviaDbContext();
-            var list = from q in db.Questions where q.PlayerId == pId select q;
+            var list = from q in db.Questions where q.PlayerId == pId && q.StatusId == 2 select q;
             return list.ToList().Count();
         }
 
@@ -307,6 +318,25 @@ namespace Trivia_Stage1.Models
                 players += $"Player #{p.PlayerId}, {p.Email}, {p.PName}, {p.Score}, {db.GetRankByRankID(p.RankId)}\n";
             }
             return players;
+        }
+
+        public void UpdateQuesDetails(int qId, string text, string correct, string w1, string w2, string w3)
+        {
+            Models.TriviaDbContext db = new Models.TriviaDbContext();
+            foreach (Question q in db.Questions)
+            {
+                if (q.QuestionId == qId)
+                {
+                    q.Text = text;
+                    q.CorrectAnswer = correct;
+                    q.Wrong1 = w1;
+                    q.Wrong2 = w2;
+                    q.Wrong3 = w3;
+                    db.Entry(q).State = EntityState.Modified;
+                }
+            }
+            ShowChangeTrackerObjects();
+            db.SaveChanges();
         }
     }
 }

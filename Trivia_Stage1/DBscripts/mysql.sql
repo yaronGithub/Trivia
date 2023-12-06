@@ -16,7 +16,9 @@ CREATE TABLE [dbo].[Players] (
   RankID int foreign key references Ranks(RankID)
 );
 
-insert into Players (PlayerID, Email, pName, Score, RankId) values (1, 'yaron.traitel@gmail.com', 'Yaron', 0, 1)
+insert into Players (PlayerID, Email, pName, Score, RankId) values 
+					(1, 'yaron.traitel@gmail.com', 'Yaron', 0, 1), 
+					(2, 'josef@gmail.com', 'Josef', 0, 3)
 
 CREATE TABLE [dbo].[Topics] (
   TopicID INT PRIMARY KEY not null,
@@ -54,4 +56,4 @@ insert into Questions (QuestionID, [Text], CorrectAnswer, Wrong1, Wrong2, Wrong3
 	(4, 'How many students are there in Ramon High Shcool?', '550', '551', '490', '1000', 5, 2, 1),
 	(5, 'Which country hosted the 2016 Summer Olympics?', 'Brazil', 'United States', 'Russia', 'China', 1, 2, 1)
 
-select * from Players
+select * from Questions

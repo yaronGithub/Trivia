@@ -131,13 +131,31 @@ namespace Trivia_Stage1.UI
                 if (player.RankId == 1)
                 {
                     Console.WriteLine("Hi, dear manager!");
-                    Console.WriteLine("For adding a trivia topic enter 1 (else for adding a question): ");
+                    Console.WriteLine("For adding a trivia topic enter 1, for updating the questions - 2 (else for adding a question): ");
                     ch = int.Parse(Console.ReadLine());
                     if (ch == 1)
                     {
                         Console.WriteLine("Enter a new topic: ");
                         string newTopic = Console.ReadLine();
                         db.AddNewTopic(newTopic);
+                    }else if (ch == 2)
+                    {
+                        Console.WriteLine(db.GetAllQuestions());
+                        Console.WriteLine("Enter ques id you want to change: ");
+                        int qId = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Update text: ");
+                        string qText = Console.ReadLine();
+                        Console.WriteLine("Update correct answer: ");
+                        string cAns = Console.ReadLine();
+                        Console.WriteLine("Update wrong 1:");
+                        string w1 = Console.ReadLine();
+                        Console.WriteLine("Update wrong 2:");
+                        string w2 = Console.ReadLine();
+                        Console.WriteLine("Update wrong 3:");
+                        string w3 = Console.ReadLine();
+                        db.UpdateQuesDetails(qId, qText, cAns, w1, w2, w3);
+                        Console.WriteLine($"Question #{qId} updated successfully!");
+                        goto end;
                     }
                 }
                 if (ch != 1)
@@ -179,6 +197,7 @@ namespace Trivia_Stage1.UI
                 db.ChangePlayerRank(player.PlayerId);
                 Console.WriteLine("Your rank is 'Master'. From now you can approve or reject pended questions.");
             }
+end:            
             Console.ReadKey(true);
         }
 
@@ -190,11 +209,15 @@ namespace Trivia_Stage1.UI
             {
                 if (pQuestions.Count != 0)
                 {
-                    foreach (Question q in pQuestions)
+/*nextPended:*/     foreach (Question q in pQuestions)
                     {
                         Console.WriteLine(db.GetQuesDetailsbyQid(q.QuestionId));
-                        Console.WriteLine("Exit - 1. Approve-2. Reject - 3.");
+                        Console.WriteLine("Exit-1. Approve-2. Reject-3.");
                         choose = int.Parse(Console.ReadLine());
+                        /*if (choose == 4)
+                        {
+                            goto nextPended;
+                        }*/
                         if (choose == 2)
                         {
                             db.ApproveOrRejectQuestion(true, q.QuestionId);
@@ -230,7 +253,7 @@ namespace Trivia_Stage1.UI
             Console.WriteLine($"score={player.Score}\n");
             int answer = 0;
             int j = 1;
-            while (answer != 5)
+loop:       while (answer != 5)
             {
                 Console.WriteLine($"Question no. {j}");
                 int correct = 0;
@@ -306,11 +329,16 @@ namespace Trivia_Stage1.UI
                     }
                 }
                 Console.WriteLine(fullQuestion);
-                Console.Write("\nEnter your answer (1-4, exit-5): ");
+                Console.Write("\nEnter your answer (1-4, exit-5, skip-6): ");
                 answer = 0;
                 try
                 {
                     answer = int.Parse(Console.ReadLine());
+                    if (answer == 6)
+                    {
+                        j++;
+                        goto loop;
+                    }
                     while ((answer > 4 || answer < 1) && answer != 5)
                     {
                         Console.WriteLine("Please enter an answer between 1-4: ");
